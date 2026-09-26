@@ -3,147 +3,1016 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>PathSense</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  :root{
-    --asphalt:#0e0f0d; --asphalt2:#161813; --sign-green:#155a3a; --sign-green-dk:#0d3f28;
-    --paper:#f2ede1; --paper-dim:#b9c2b6;
-    --hazard-y:#f0b429; --hazard-y-dk:#161813;
-    --hi:#e2483a; --mid:#f0b429; --lo:#7fae6b;
-    --line:#2b2e28;
+
+:root{
+  --asphalt:#0e0f0d;
+  --asphalt2:#161813;
+  --sign-green:#155a3a;
+  --sign-green-dk:#0d3f28;
+  --paper:#f2ede1;
+  --paper-dim:#b9c2b6;
+  --hazard-y:#f0b429;
+  --hazard-y-dk:#161813;
+  --hi:#e2483a;
+  --mid:#f0b429;
+  --lo:#7fae6b;
+  --line:#2b2e28;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  height:100%;
+}
+
+body{
+  margin:0;
+  background:var(--asphalt);
+  color:var(--paper);
+  font-family:'Inter',system-ui,sans-serif;
+  display:flex;
+  flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+
+  background-image:
+    radial-gradient(
+      ellipse at 15% 10%,
+      rgba(255,255,255,.025),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 85% 90%,
+      rgba(255,255,255,.02),
+      transparent 45%
+    );
+}
+
+.display{
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  letter-spacing:.3px;
+}
+
+.chevrons{
+  height:9px;
+  width:100%;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      var(--hazard-y) 0 14px,
+      var(--hazard-y-dk) 14px 28px
+    );
+}
+
+header{
+  background:
+    linear-gradient(
+      180deg,
+      var(--sign-green),
+      var(--sign-green-dk)
+    );
+
+  border-bottom:3px solid var(--paper);
+
+  padding:16px 22px;
+
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+header h1{
+  margin:0;
+  font-size:26px;
+  color:var(--paper);
+  text-transform:uppercase;
+}
+
+.route{
+  font-size:12px;
+  color:var(--paper-dim);
+  margin-top:3px;
+  letter-spacing:.4px;
+}
+
+.kmref{
+  font-family:'Oswald',sans-serif;
+  font-weight:700;
+  color:var(--sign-green-dk);
+  background:var(--paper);
+  padding:5px 12px;
+  font-size:13px;
+  border-radius:2px;
+}
+
+main{
+  flex:1;
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:14px;
+  padding:16px 22px 20px;
+  min-height:0;
+}
+
+@media(max-width:820px){
+
+  main{
+    grid-template-columns:1fr;
   }
-  *{box-sizing:border-box;}
-  html,body{height:100%;}
-  body{
-    margin:0; background:var(--asphalt); color:var(--paper);
-    font-family:'Inter',system-ui,sans-serif;
-    display:flex; flex-direction:column;
-    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-    background-image:
-      radial-gradient(ellipse at 15% 10%, rgba(255,255,255,.025), transparent 40%),
-      radial-gradient(ellipse at 85% 90%, rgba(255,255,255,.02), transparent 45%);
-  }
-  .display{font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.3px;}
 
-  .chevrons{
-    height:9px; width:100%;
-    background: repeating-linear-gradient(135deg, var(--hazard-y) 0 14px, var(--hazard-y-dk) 14px 28px);
-  }
+}
 
-  header{
-    background:linear-gradient(180deg, var(--sign-green), var(--sign-green-dk));
-    border-bottom:3px solid var(--paper);
-    padding:16px 22px; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:8px;
-  }
-  header h1{margin:0; font-size:26px; color:var(--paper); text-transform:uppercase;}
-  .route{font-size:12px; color:var(--paper-dim); margin-top:3px; letter-spacing:.4px;}
-  .kmref{
-    font-family:'Oswald',sans-serif; font-weight:700; color:var(--sign-green-dk);
-    background:var(--paper); padding:5px 12px; font-size:13px; border-radius:2px;
-  }
+.board{
+  background:var(--asphalt2);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:15px;
+  position:relative;
+}
 
-  main{flex:1; display:grid; grid-template-columns:280px 1fr; gap:14px; padding:16px 22px 20px; min-height:0;}
-  @media (max-width:820px){ main{grid-template-columns:1fr;} }
+.board::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  background:var(--sign-green);
+  border-radius:3px 3px 0 0;
+}
 
-  .board{background:var(--asphalt2); border:1px solid var(--line); border-radius:3px; padding:15px; position:relative;}
-  .board::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--sign-green); border-radius:3px 3px 0 0;}
-  .stack{display:flex; flex-direction:column; gap:12px;}
-  .board h2{font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--paper-dim); margin:0 0 12px; font-weight:600;}
+.stack{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
 
-  .readout-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-  .readout{border:1px solid var(--line); padding:10px; border-radius:2px;}
-  .readout .val{display:block; font-size:24px;}
-  .readout .unit{font-size:10.5px; color:var(--paper-dim); text-transform:uppercase; letter-spacing:.4px;}
+.board h2{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--paper-dim);
+  margin:0 0 12px;
+  font-weight:600;
+}
 
-  .tri{width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:10px solid currentColor; flex-shrink:0;}
-  .sev-row{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--paper-dim); padding:6px 0; border-bottom:1px solid var(--line);}
-  .sev-row:last-child{border-bottom:none;}
+.readout-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 
-  .feed{display:flex; flex-direction:column; max-height:240px; overflow-y:auto;}
-  .feed-row{display:flex; align-items:center; gap:9px; padding:7px 0; border-bottom:1px solid var(--line); font-size:12.5px;}
-  .feed-row:last-child{border-bottom:none;}
-  .feed-row .loc{flex:1;}
-  .feed-row .lvl{font-size:10px; text-transform:uppercase; letter-spacing:.3px; color:var(--paper-dim);}
+.readout{
+  border:1px solid var(--line);
+  padding:10px;
+  border-radius:2px;
+}
 
-  .map-wrap{position:relative; border:1px solid var(--line); border-radius:3px; min-height:420px; background:var(--asphalt2); overflow:hidden;}
-  .map-wrap::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--sign-green); z-index:2;}
-  svg{width:100%; height:100%; display:block;}
-  .road{stroke:#20241d; stroke-width:18; fill:none;}
-  .road-line{stroke:var(--paper); stroke-opacity:.35; stroke-width:1.5; fill:none; stroke-dasharray:10 10;}
-  .marker-tri{stroke:#0e0f0d; stroke-width:1.5; stroke-linejoin:round;}
-  .map-tag{position:absolute; top:14px; left:12px; background:var(--sign-green); color:var(--paper); font-size:11px; padding:4px 10px; border-radius:2px; text-transform:uppercase; letter-spacing:.4px;}
-  .map-tag2{position:absolute; bottom:12px; right:12px; font-size:10.5px; color:var(--paper-dim); background:rgba(14,15,13,.7); padding:4px 9px; border-radius:2px;}
+.readout .val{
+  display:block;
+  font-size:24px;
+}
 
-  footer{padding:10px 22px calc(13px + env(safe-area-inset-bottom,0px)); font-size:11px; color:var(--paper-dim); text-align:center;}
+.readout .unit{
+  font-size:10.5px;
+  color:var(--paper-dim);
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.tri{
+  width:0;
+  height:0;
+
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-bottom:10px solid currentColor;
+
+  flex-shrink:0;
+}
+
+.sev-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  font-size:12.5px;
+  color:var(--paper-dim);
+
+  padding:6px 0;
+
+  border-bottom:1px solid var(--line);
+}
+
+.sev-row:last-child{
+  border-bottom:none;
+}
+
+.feed{
+  display:flex;
+  flex-direction:column;
+
+  max-height:240px;
+  overflow-y:auto;
+}
+
+.feed-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+
+  padding:7px 0;
+
+  border-bottom:1px solid var(--line);
+
+  font-size:12.5px;
+}
+
+.feed-row:last-child{
+  border-bottom:none;
+}
+
+.feed-row .loc{
+  flex:1;
+}
+
+.feed-row .lvl{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  color:var(--paper-dim);
+}
+
+.map-wrap{
+  position:relative;
+
+  border:1px solid var(--line);
+  border-radius:3px;
+
+  min-height:420px;
+
+  background:var(--asphalt2);
+
+  overflow:hidden;
+}
+
+.map-wrap::before{
+  content:"";
+
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+
+  height:3px;
+
+  background:var(--sign-green);
+
+  z-index:2;
+}
+
+svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.road{
+  stroke:#20241d;
+  stroke-width:18;
+  fill:none;
+}
+
+.road-line{
+  stroke:var(--paper);
+  stroke-opacity:.35;
+  stroke-width:1.5;
+  fill:none;
+  stroke-dasharray:10 10;
+}
+
+.marker-tri{
+  stroke:#0e0f0d;
+  stroke-width:1.5;
+  stroke-linejoin:round;
+}
+
+.map-tag{
+  position:absolute;
+
+  top:14px;
+  left:12px;
+
+  background:var(--sign-green);
+  color:var(--paper);
+
+  font-size:11px;
+
+  padding:4px 10px;
+
+  border-radius:2px;
+
+  text-transform:uppercase;
+
+  letter-spacing:.4px;
+}
+
+.map-tag2{
+  position:absolute;
+
+  bottom:12px;
+  right:12px;
+
+  font-size:10.5px;
+
+  color:var(--paper-dim);
+
+  background:rgba(14,15,13,.7);
+
+  padding:4px 9px;
+
+  border-radius:2px;
+}
+
+footer{
+  padding:10px 22px
+    calc(13px + env(safe-area-inset-bottom,0px));
+
+  font-size:11px;
+
+  color:var(--paper-dim);
+
+  text-align:center;
+}
+
 </style>
 </head>
+
+
 <body>
 
 <div class="chevrons"></div>
 
+
 <header>
+
   <div>
-    <h1 class="display">PathSense</h1>
-    <div class="route">Ring Road, Jaipur — live hazard session</div>
+
+    <h1 class="display">
+      PathSense
+    </h1>
+
+    <div
+      id="route"
+      class="route"
+    >
+      Loading route...
+    </div>
+
   </div>
-  <div class="kmref">SESSION 04 · 3.4 KM</div>
+
+
+  <div
+    id="session-ref"
+    class="kmref"
+  >
+    Loading session...
+  </div>
+
 </header>
 
+
+
 <main>
+
+
+  <!-- LEFT SIDE -->
+
   <div class="stack">
+
+
+    <!-- SESSION READOUT -->
+
     <div class="board">
-      <h2>Session readout</h2>
+
+      <h2>
+        Session readout
+      </h2>
+
+
       <div class="readout-grid">
-        <div class="readout"><span class="val display">6</span><span class="unit">Hazards found</span></div>
-        <div class="readout"><span class="val display">3.4</span><span class="unit">Km covered</span></div>
-        <div class="readout"><span class="val display">.74</span><span class="unit">mAP@50</span></div>
-        <div class="readout"><span class="val display">.63</span><span class="unit">Severity corr.</span></div>
+
+
+        <div class="readout">
+
+          <span
+            id="hazards-found"
+            class="val display"
+          >
+            --
+          </span>
+
+          <span class="unit">
+            Hazards found
+          </span>
+
+        </div>
+
+
+
+        <div class="readout">
+
+          <span
+            id="km-covered"
+            class="val display"
+          >
+            --
+          </span>
+
+          <span class="unit">
+            Km covered
+          </span>
+
+        </div>
+
+
+
+        <div class="readout">
+
+          <span
+            id="map50"
+            class="val display"
+          >
+            --
+          </span>
+
+          <span class="unit">
+            mAP@50
+          </span>
+
+        </div>
+
+
+
+        <div class="readout">
+
+          <span
+            id="severity-corr"
+            class="val display"
+          >
+            --
+          </span>
+
+          <span class="unit">
+            Severity corr.
+          </span>
+
+        </div>
+
+
       </div>
+
     </div>
 
-    <div class="board">
-      <h2>Severity key</h2>
-      <div class="sev-row"><span class="tri" style="color:var(--hi)"></span>High — large pothole / deep crack</div>
-      <div class="sev-row"><span class="tri" style="color:var(--mid)"></span>Medium — moderate surface break</div>
-      <div class="sev-row"><span class="tri" style="color:var(--lo)"></span>Low — minor irregularity</div>
-    </div>
+
+
+    <!-- SEVERITY -->
 
     <div class="board">
-      <h2>Detection log</h2>
-      <div class="feed">
-        <div class="feed-row"><span class="tri" style="color:var(--hi)"></span><span class="loc">MG Road, flyover</span><span class="lvl">High</span></div>
-        <div class="feed-row"><span class="tri" style="color:var(--mid)"></span><span class="loc">Sector 14 junction</span><span class="lvl">Med</span></div>
-        <div class="feed-row"><span class="tri" style="color:var(--hi)"></span><span class="loc">Tonk Road km 4.2</span><span class="lvl">High</span></div>
-        <div class="feed-row"><span class="tri" style="color:var(--lo)"></span><span class="loc">Civil Lines crossing</span><span class="lvl">Low</span></div>
-        <div class="feed-row"><span class="tri" style="color:var(--mid)"></span><span class="loc">Ajmer Rd underpass</span><span class="lvl">Med</span></div>
-        <div class="feed-row"><span class="tri" style="color:var(--hi)"></span><span class="loc">Vidhyadhar Nagar</span><span class="lvl">High</span></div>
+
+      <h2>
+        Severity key
+      </h2>
+
+
+      <div class="sev-row">
+
+        <span
+          class="tri"
+          style="color:var(--hi)"
+        ></span>
+
+        High — large pothole / deep crack
+
       </div>
+
+
+      <div class="sev-row">
+
+        <span
+          class="tri"
+          style="color:var(--mid)"
+        ></span>
+
+        Medium — moderate surface break
+
+      </div>
+
+
+      <div class="sev-row">
+
+        <span
+          class="tri"
+          style="color:var(--lo)"
+        ></span>
+
+        Low — minor irregularity
+
+      </div>
+
     </div>
+
+
+
+    <!-- DETECTION LOG -->
+
+    <div class="board">
+
+      <h2>
+        Detection log
+      </h2>
+
+
+      <div
+        id="detection-log"
+        class="feed"
+      >
+
+        Loading detections...
+
+      </div>
+
+    </div>
+
+
   </div>
+
+
+
+  <!-- MAP -->
 
   <div class="map-wrap">
-    <div class="map-tag">Hazard overlay</div>
-    <div class="map-tag2">GPS lock · 12 sat</div>
-    <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
-      <path class="road" d="M40,420 C180,380 220,300 300,280 S420,220 460,160 S600,80 760,60"/>
-      <path class="road-line" d="M40,420 C180,380 220,300 300,280 S420,220 460,160 S600,80 760,60"/>
-      <path class="road" d="M60,60 C160,140 260,180 340,260 S480,360 560,400 S680,440 760,460"/>
-      <path class="road-line" d="M60,60 C160,140 260,180 340,260 S480,360 560,400 S680,440 760,460"/>
 
-      <polygon class="marker-tri" points="140,386 148,401 132,401" fill="#e2483a"/>
-      <polygon class="marker-tri" points="330,261 338,276 322,276" fill="#f0b429"/>
-      <polygon class="marker-tri" points="470,141 478,156 462,156" fill="#e2483a"/>
-      <polygon class="marker-tri" points="600,81 608,96 592,96" fill="#7fae6b"/>
-      <polygon class="marker-tri" points="430,321 438,336 422,336" fill="#f0b429"/>
-      <polygon class="marker-tri" points="650,411 658,426 642,426" fill="#e2483a"/>
+
+    <div class="map-tag">
+      Hazard overlay
+    </div>
+
+
+    <div
+      id="gps-status"
+      class="map-tag2"
+    >
+      Loading GPS...
+    </div>
+
+
+    <svg
+      viewBox="0 0 800 500"
+      preserveAspectRatio="xMidYMid slice"
+    >
+
+
+      <!-- ROAD 1 -->
+
+      <path
+        class="road"
+        d="M40,420 C180,380 220,300 300,280 S420,220 460,160 S600,80 760,60"
+      />
+
+      <path
+        class="road-line"
+        d="M40,420 C180,380 220,300 300,280 S420,220 460,160 S600,80 760,60"
+      />
+
+
+
+      <!-- ROAD 2 -->
+
+      <path
+        class="road"
+        d="M60,60 C160,140 260,180 340,260 S480,360 560,400 S680,440 760,460"
+      />
+
+      <path
+        class="road-line"
+        d="M60,60 C160,140 260,180 340,260 S480,360 560,400 S680,440 760,460"
+      />
+
+
+
+      <!-- BACKEND HAZARD MARKERS -->
+
+      <g id="hazard-markers"></g>
+
+
     </svg>
+
   </div>
+
 </main>
 
-<footer>Illustrative mockup for presentation purposes — not connected to live GPS or model data.</footer>
+
+
+<footer>
+
+  PathSense hazard monitoring dashboard —
+  connected to Flask backend.
+
+</footer>
+
+
+
+<script>
+
+
+/*
+    Flask Backend URL
+
+    Your Flask backend must be running at:
+
+    http://127.0.0.1:5000
+*/
+
+const API_BASE =
+  "http://127.0.0.1:5000";
+
+
+
+/*
+    Convert severity into color
+*/
+
+function severityColor(level){
+
+  const value =
+    String(level).toLowerCase();
+
+
+  if(value === "high"){
+
+    return "#e2483a";
+
+  }
+
+
+  if(
+    value === "medium" ||
+    value === "med"
+  ){
+
+    return "#f0b429";
+
+  }
+
+
+  return "#7fae6b";
+
+}
+
+
+
+/*
+    Display severity name
+*/
+
+function formatSeverity(level){
+
+  const value =
+    String(level).toLowerCase();
+
+
+  if(
+    value === "medium" ||
+    value === "med"
+  ){
+
+    return "Med";
+
+  }
+
+
+  return value.charAt(0).toUpperCase()
+    + value.slice(1);
+
+}
+
+
+
+/*
+    Load dashboard data
+*/
+
+async function loadDashboard(){
+
+  try{
+
+
+    /*
+        Call Flask API
+    */
+
+    const response =
+      await fetch(
+        `${API_BASE}/api/dashboard`
+      );
+
+
+    /*
+        Check response
+    */
+
+    if(!response.ok){
+
+      throw new Error(
+        `API returned ${response.status}`
+      );
+
+    }
+
+
+    /*
+        Convert JSON
+    */
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "PathSense dashboard connected:",
+      data
+    );
+
+
+
+    /*
+        =========================
+        HEADER
+        =========================
+    */
+
+    document.getElementById(
+      "route"
+    ).textContent =
+      `${data.route} — live hazard session`;
+
+
+    document.getElementById(
+      "session-ref"
+    ).textContent =
+      `SESSION ${
+        String(data.session_id)
+          .padStart(2,"0")
+      } · ${data.km_covered} KM`;
+
+
+
+    /*
+        =========================
+        DASHBOARD METRICS
+        =========================
+    */
+
+    document.getElementById(
+      "hazards-found"
+    ).textContent =
+      data.hazards_found;
+
+
+    document.getElementById(
+      "km-covered"
+    ).textContent =
+      data.km_covered;
+
+
+    document.getElementById(
+      "map50"
+    ).textContent =
+      data.map50;
+
+
+    document.getElementById(
+      "severity-corr"
+    ).textContent =
+      data.severity_correlation;
+
+
+
+    /*
+        =========================
+        GPS STATUS
+        =========================
+    */
+
+    document.getElementById(
+      "gps-status"
+    ).textContent =
+      `${data.gps_status} · ${data.satellites} sat`;
+
+
+
+    /*
+        =========================
+        DETECTION LOG
+        =========================
+    */
+
+    const log =
+      document.getElementById(
+        "detection-log"
+      );
+
+
+    log.innerHTML = "";
+
+
+    data.detections.forEach(
+      item => {
+
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "feed-row";
+
+
+
+        const triangle =
+          document.createElement("span");
+
+        triangle.className =
+          "tri";
+
+        triangle.style.color =
+          severityColor(
+            item.severity
+          );
+
+
+
+        const location =
+          document.createElement("span");
+
+        location.className =
+          "loc";
+
+        location.textContent =
+          item.location;
+
+
+
+        const level =
+          document.createElement("span");
+
+        level.className =
+          "lvl";
+
+        level.textContent =
+          formatSeverity(
+            item.severity
+          );
+
+
+
+        row.appendChild(
+          triangle
+        );
+
+        row.appendChild(
+          location
+        );
+
+        row.appendChild(
+          level
+        );
+
+
+        log.appendChild(
+          row
+        );
+
+      }
+    );
+
+
+
+    /*
+        =========================
+        MAP MARKERS
+        =========================
+    */
+
+    const markerGroup =
+      document.getElementById(
+        "hazard-markers"
+      );
+
+
+    markerGroup.innerHTML = "";
+
+
+    data.detections.forEach(
+      item => {
+
+
+        const x =
+          Number(item.x);
+
+        const y =
+          Number(item.y);
+
+
+
+        const polygon =
+          document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polygon"
+          );
+
+
+        polygon.setAttribute(
+          "points",
+          `${x},${y-15}
+           ${x+8},${y}
+           ${x-8},${y}`
+        );
+
+
+        polygon.setAttribute(
+          "class",
+          "marker-tri"
+        );
+
+
+        polygon.setAttribute(
+          "fill",
+          severityColor(
+            item.severity
+          )
+        );
+
+
+        markerGroup.appendChild(
+          polygon
+        );
+
+      }
+    );
+
+
+  }
+
+
+  catch(error){
+
+    console.error(
+      "Backend connection failed:",
+      error
+    );
+
+
+    document.getElementById(
+      "route"
+    ).textContent =
+      "Backend connection failed";
+
+
+    document.getElementById(
+      "gps-status"
+    ).textContent =
+      "Backend offline";
+
+  }
+
+}
+
+
+
+/*
+    Start dashboard
+*/
+
+loadDashboard();
+
+
+</script>
+
 
 </body>
 </html>
